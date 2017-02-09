@@ -37,24 +37,32 @@ let webpackConfig = {
         rules: [
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders:{
-                        css: ExtractTextPlugin.extract({
-                            loader: 'css-loader?minimize!sass-loader',
-                            fallbackLoader: 'vue-style-loader'
-                        })
-                    }
-                }
+                use: [
+                    {
+                        loader: 'vue-loader',
+                        options: {
+                            loaders:{
+                                css: ExtractTextPlugin.extract({
+                                    loader: 'css-loader?minimize!sass-loader',
+                                    fallbackLoader: 'vue-style-loader'
+                                })
+                            }
+                        }
+                    },
+                ],
             },
             {
-                test: /\.js%/,
+                test: /\.js$/,
                 exclude: /node_modules/,
                 include: path.join(__dirname, 'src'),
-                loader: 'babel',
-                query: {
-                    presets: ['es2015']
-                }
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        query: {
+                            presets: ['es2015']
+                        }
+                    }
+                ]
             },
             {
                 test: /\.scss$/,
@@ -66,11 +74,26 @@ let webpackConfig = {
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 // 如果文件小于8kb那么则用base64方式添加到页面中  大于8kb则放到name设置的文件夹中
-                loader: 'url-loader?limit=8192&name=images/[hash:32].[ext]'
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192,
+                            name: 'images/[hash:32].[ext]'
+                        }
+                    }
+                ]
             },
             {
                 test: /\.(woff|eot|ttf)\??.*$/,
-                loader: 'url-loader?name=fonts/[hash:32].[ext]'
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: 'fonts/[hash:32].[ext]'
+                        }
+                    }
+                ]
             },
         ]
     },
@@ -91,13 +114,15 @@ if ('production' === process.env.NODE_ENV) {
     // 压缩代码未完成
     // ERROR in index.js from UglifyJs
     // SyntaxError: Unexpected token punc «(», expected punc «:» [index.js:6318,8]
-    // webpackConfig.plugins.push(
-    //     new webpack.optimize.UglifyJsPlugin({
-    //         compress: { warnings: false },
-    //         output: { comments: false },
-    //         sourceMap: true
-    //     })
-    // )
+    webpackConfig.plugins.push(
+        new webpack.optimize.UglifyJsPlugin({
+            // mangle:   true,
+            // compress: {
+            //     warnings: false,
+            //     drop_console: true
+            // },
+        })
+)
 } else {
     // 在开发环境时显示更多信息
     webpackConfig.devtool = 'eval-source-map';

@@ -9,12 +9,15 @@
 <script>
     import './index.scss';
     export default {
-        data () {
+        data: function(){
             return {
                 greeting: 'hello'
             }
         }
     }
+    setTimeout(() => {
+        console.log(1)
+    }, 1);
 </script>
 
 <style lang="sass">

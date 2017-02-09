@@ -1,10 +1,12 @@
-import Vue from 'vue'
+"use strict";
+
+import Vue from 'vue';
 
 import index from './index.vue';
 
-console.log(1)
-
 new Vue({
-    el: '#root',
-    render: h => h(index)
+    el: "#root",
+    render: function (h) {
+        return h(index)
+    }
 })
